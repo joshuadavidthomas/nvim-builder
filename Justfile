@@ -26,7 +26,9 @@ build-latest:
 # Run the build and output to ./output directory
 run:
     mkdir -p output
-    docker run -v $(pwd)/output:/workdir/output neovim-builder
+    docker run -v $(pwd)/output:/workdir/output \
+        --user $(id -u):$(id -g) \
+        neovim-builder
 
 # Clean output directory
 clean:
