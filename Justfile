@@ -38,20 +38,18 @@ run TAG="HEAD":
 clean:
     rm -rf output
 
-# Install the built nvim to ~/.local, with interactive build selection if needed
+# Install the built nvim to ~/.local
 install:
     #!/usr/bin/env bash
-    if [ ! -d "output" ]; then
-        echo "No existing build found. Select a build type:"
-        build_type=$(printf "head\nlatest\nselect" | fzf --height 40% --reverse)
-        if [ -n "$build_type" ]; then
-            just "$build_type"
-        else
-            echo "No build type selected. Exiting."
-            exit 1
-        fi
+    echo "Select build type:"
+    build_type=$(printf "head\nlatest\nselect" | fzf --height 40% --reverse)
+    if [ -n "$build_type" ]; then
+        just "$build_type"
+        mkdir -p ~/.local
+        cp -r output/* ~/.local/
+        echo "Installed to ~/.local/"
+        echo "Make sure ~/.local/bin is in your PATH"
+    else
+        echo "No build type selected. Exiting."
+        exit 1
     fi
-    mkdir -p ~/.local
-    cp -r output/* ~/.local/
-    echo "Installed to ~/.local/"
-    echo "Make sure ~/.local/bin is in your PATH"
