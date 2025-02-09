@@ -6,9 +6,15 @@ default:
 build:
     docker build -t neovim-builder .
 
-# Build Docker image with specific tag
-build-tag tag:
-    docker build -t neovim-builder --build-arg NVIM_TAG={{tag}} .
+# Interactively select and build a specific tag
+build-select:
+    #!/usr/bin/env bash
+    tag=$(curl -s https://api.github.com/repos/neovim/neovim/tags | \
+        jq -r '.[].name' | \
+        fzf --height 40% --reverse)
+    if [ -n "$tag" ]; then
+        docker build -t neovim-builder --build-arg NVIM_TAG="$tag" .
+    fi
 
 # Build stable version
 build-stable:
@@ -28,3 +34,6 @@ all: build run
 
 # Build and run stable version
 stable: build-stable run
+
+# Select tag, build and run
+select: build-select run
