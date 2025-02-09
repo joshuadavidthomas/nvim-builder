@@ -23,12 +23,9 @@ RUN if [ "${NVIM_TAG}" = "HEAD" ]; then \
       git clone --depth 1 --branch ${NVIM_TAG} https://github.com/neovim/neovim; \
     fi
 
-# Build Neovim following the official instructions
-RUN cd neovim \
-  && make CMAKE_BUILD_TYPE=RelWithDebInfo \
-  CMAKE_INSTALL_PREFIX=/workdir/output \
-  && make install
+# Copy entrypoint script and make it executable  
+COPY entrypoint.sh /workdir/
+RUN chmod +x /workdir/entrypoint.sh
 
-# The output directory will be mounted from the host system
-# Run with: docker run -v $(pwd)/output:/workdir/output neovim-builder
-# Or with tag: docker run -v $(pwd)/output:/workdir/output neovim-builder --build-arg NVIM_TAG=stable
+# Set the entrypoint
+ENTRYPOINT ["/workdir/entrypoint.sh"]
