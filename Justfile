@@ -1,6 +1,18 @@
-# List available recipes
+[private]
 default:
     @just --list
+
+[private]
+run TAG="HEAD":
+    mkdir -p output
+    docker run -v $(pwd)/output:/workdir/output \
+        --user $(id -u):$(id -g) \
+        -e NVIM_TAG="{{ TAG }}" \
+        neovim-builder
+
+[private]
+clean:
+    rm -rf output
 
 # Build the Docker image
 build:
@@ -27,16 +39,6 @@ select: clean build
         just run "$tag"
     fi
 
-run TAG="HEAD":
-    mkdir -p output
-    docker run -v $(pwd)/output:/workdir/output \
-        --user $(id -u):$(id -g) \
-        -e NVIM_TAG="{{ TAG }}" \
-        neovim-builder
-
-# Clean output directory
-clean:
-    rm -rf output
 
 # Install the built nvim to ~/.local
 install:
