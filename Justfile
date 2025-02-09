@@ -42,7 +42,13 @@ clean:
 install:
     #!/usr/bin/env bash
     echo "Select build type:"
-    build_type=$(printf "head\nlatest\nselect" | fzf --height 40% --reverse)
+    build_type=$(printf "%s\n" \
+        "head    - Latest development version (main branch)" \
+        "latest  - Most recent stable release" \
+        "select  - Choose a specific version tag" \
+        | fzf --height 40% --reverse \
+        | cut -d'-' -f1 \
+        | tr -d ' ')
     if [ -n "$build_type" ]; then
         just "$build_type"
         mkdir -p ~/.local
