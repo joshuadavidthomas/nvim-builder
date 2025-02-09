@@ -9,7 +9,8 @@ build:
 # Interactively select and build a specific tag
 build-select:
     #!/usr/bin/env bash
-    tag=$(curl -s https://api.github.com/repos/neovim/neovim/tags | \
+    tag=$(printf "HEAD\n" && \
+        curl -s https://api.github.com/repos/neovim/neovim/tags | \
         jq -r '.[].name' | \
         fzf --height 40% --reverse)
     if [ -n "$tag" ]; then
