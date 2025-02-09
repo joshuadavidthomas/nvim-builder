@@ -17,9 +17,11 @@ build-select:
         docker build -t neovim-builder --build-arg NVIM_TAG="$tag" .
     fi
 
-# Build stable version
-build-stable:
-    docker build -t neovim-builder --build-arg NVIM_TAG=stable .
+# Build latest release version
+build-latest:
+    #!/usr/bin/env bash
+    latest_tag=$(curl -s https://api.github.com/repos/neovim/neovim/tags | jq -r '.[0].name')
+    docker build -t neovim-builder --build-arg NVIM_TAG="$latest_tag" .
 
 # Run the build and output to ./output directory
 run:
@@ -33,8 +35,8 @@ clean:
 # Build and run in one command (HEAD version)
 all: build run
 
-# Build and run stable version
-stable: build-stable run
+# Build and run latest release version
+latest: build-latest run
 
 # Select tag, build and run
 select: build-select run
