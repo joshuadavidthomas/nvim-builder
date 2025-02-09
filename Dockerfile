@@ -17,9 +17,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
 WORKDIR /workdir
 
 # Clone Neovim repository and checkout specified tag
-RUN git clone https://github.com/neovim/neovim && \
-  cd neovim && \
-  git checkout ${NVIM_TAG}
+RUN if [ "${NVIM_TAG}" = "HEAD" ]; then \
+      git clone --depth 1 https://github.com/neovim/neovim; \
+    else \
+      git clone --depth 1 --branch ${NVIM_TAG} https://github.com/neovim/neovim; \
+    fi
 
 # Build Neovim following the official instructions
 RUN cd neovim \
