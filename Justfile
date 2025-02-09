@@ -9,10 +9,10 @@ build:
 # Interactively select and build a specific tag
 build-select:
     #!/usr/bin/env bash
-    tag=$(printf "HEAD\n" && \
+    tag=$(( echo "HEAD" && \
         curl -s https://api.github.com/repos/neovim/neovim/tags | \
-        jq -r '.[].name' | \
-        fzf --height 40% --reverse)
+        jq -r '.[].name' ) | \
+        fzf --height 40% --reverse | tr -d '\n')
     if [ -n "$tag" ]; then
         mkdir -p output
         docker run -v $(pwd)/output:/workdir/output \
