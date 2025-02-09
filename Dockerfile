@@ -10,8 +10,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
   ninja-build \
   && rm -rf /var/lib/apt/lists/*
 
-# Create and set working directory
+# Create and set working directory with proper permissions
 WORKDIR /workdir
+RUN chmod 777 /workdir
 
 # Copy entrypoint script and make it executable  
 COPY entrypoint.sh /workdir/
