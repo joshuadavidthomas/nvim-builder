@@ -43,10 +43,10 @@ clean:
     rm -rf output
 
 # Build and run in one command (HEAD version)
-all: build run
+all: clean build run
 
 # Build and run latest release version
-latest: build
+latest: clean build
 
 # Select tag and build
-select: build build-select
+select: clean build build-select
