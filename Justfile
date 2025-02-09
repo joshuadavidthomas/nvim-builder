@@ -2,7 +2,7 @@
 default:
     @just --list
 
-# Build the Docker image with default tag (HEAD)
+# Build the Docker image
 build:
     docker build -t neovim-builder .
 
@@ -14,16 +14,24 @@ build-select:
         jq -r '.[].name' | \
         fzf --height 40% --reverse)
     if [ -n "$tag" ]; then
-        docker build -t neovim-builder --build-arg NVIM_TAG="$tag" .
+        mkdir -p output
+        docker run -v $(pwd)/output:/workdir/output \
+            --user $(id -u):$(id -g) \
+            -e NVIM_TAG="$tag" \
+            neovim-builder
     fi
 
 # Build latest release version
 build-latest:
     #!/usr/bin/env bash
     latest_tag=$(curl -s https://api.github.com/repos/neovim/neovim/tags | jq -r '.[0].name')
-    docker build -t neovim-builder --build-arg NVIM_TAG="$latest_tag" .
+    mkdir -p output
+    docker run -v $(pwd)/output:/workdir/output \
+        --user $(id -u):$(id -g) \
+        -e NVIM_TAG="$latest_tag" \
+        neovim-builder
 
-# Run the build and output to ./output directory
+# Run the build and output to ./output directory (HEAD version)
 run:
     mkdir -p output
     docker run -v $(pwd)/output:/workdir/output \
@@ -38,7 +46,7 @@ clean:
 all: build run
 
 # Build and run latest release version
-latest: build-latest run
+latest: build
 
-# Select tag, build and run
-select: build-select run
+# Select tag and build
+select: build build-select
